@@ -1,4 +1,4 @@
-cabal-version: 3.0
+cabal-version: 3.12
 
 name: ml-service-hs
 version: 0.1.0.0
@@ -42,7 +42,7 @@ library
     wai,
     warp
 
-  default-language: Haskell2010
+  default-language: GHC2024
 
 executable ml-service-hs-exe
   main-is: Main.hs
@@ -58,7 +58,7 @@ executable ml-service-hs-exe
     ml-service-hs,
     warp,
     wai
-  default-language: Haskell2010
+  default-language: GHC2024
 
 test-suite ml-service-hs-test
   type: exitcode-stdio-1.0
@@ -78,4 +78,4 @@ test-suite ml-service-hs-test
     servant,
     text,
     vector
-  default-language: Haskell2010
+  default-language: GHC2024

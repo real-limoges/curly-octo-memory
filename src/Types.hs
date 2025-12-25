@@ -7,9 +7,9 @@ import Data.Aeson (FromJSON, ToJSON)
 import qualified Data.Vector.Storable as V
 
 data Payload = Payload
-    { userId   :: Int
-    , features :: [Double]
-    } deriving (Show, Generic)
+  { userId   :: Int
+  , features :: [Double]
+  } deriving (Show, Generic)
 
 instance FromJSON Payload
 
