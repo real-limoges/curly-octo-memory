@@ -21,6 +21,7 @@ library
     Core
     Lib
     Server
+    Repository
     Types
   other-modules:
     Paths_ml_service_hs
@@ -33,6 +34,7 @@ library
     base >=4.7 && <5,
     aeson,
     bytestring,
+    dotenv,
     text,
     vector,
     hedis,
@@ -56,6 +58,7 @@ executable ml-service-hs-exe
   build-depends:
     base >=4.7 && <5,
     ml-service-hs,
+    dotenv,
     warp,
     wai
   default-language: GHC2024
@@ -74,6 +77,7 @@ test-suite ml-service-hs-test
     aeson,
     base >=4.7 && <5,
     bytestring,
+    dotenv,
     ml-service-hs,
     servant,
     text,

@@ -2,46 +2,54 @@
 
 module Server (app) where
 
-import Database.PostgreSQL.Simple.Types (PGArray(..))
-import Data.Aeson (encode)
-import Servant
-import Control.Monad.IO.Class (liftIO)
-import qualified Data.Vector.Storable as V
-import Network.Wai (Application)
+-- import Database.PostgreSQL.Simple (connect, ConnectInfo(..), defaultConnectInfo, PGArray(..))
 
-import qualified Database.Redis as R
-import qualified Database.PostgreSQL.Simple as PG
-import qualified Data.ByteString.Lazy as BL
-
-import Types
 import API
+import Configuration.Dotenv (defaultConfig, loadFile)
+import Control.Monad.IO.Class (liftIO)
 import Core
+import Data.Aeson (encode)
+import Data.ByteString.Lazy qualified as BL
+import Data.Vector.Storable qualified as V
+import Database.PostgreSQL.Simple qualified as PG
+import Database.Redis qualified as R
+import Network.Wai (Application)
+import Repository (fetchUserHistory)
+import Servant
+import System.Environment (getEnv)
+import Types
 
-fetchUserHistory :: Int -> IO [(String, MathVector)]
-fetchUserHistory uid = do
-  conn <- PG.connectPostgreSQL "host=localhost dbname=mydb user=postgres password=password"
+getConn :: IO PG.Connection
+getConn = do
+  loadFile defaultConfig
+  host <- getEnv "DB_HOST"
+  db <- getEnv "DB_NAME"
+  user <- getEnv "DB_USER"
+  pass <- getEnv "DB_PASS"
 
-  rows <- PG.query conn "SELECT feature_array FROM user_features WHERE user_id = ?" (PG.Only uid)
-
-  let labeledRows = map (\(PG.Only (PGArray vec)) -> ("HistoryPoint", V.fromList vec)) rows
-
-  return labeledRows
-
+  let connInfo =
+        PG.defaultConnectInfo
+          { PG.connectHost = host,
+            PG.connectDatabase = db,
+            PG.connectUser = user,
+            PG.connectPassword = pass
+          }
+  PG.connect connInfo
 
 predictHandler :: Payload -> Handler TaskResult
 predictHandler payload = liftIO $ do
-  history <- fetchUserHistory (userId payload)
+  conn <- getConn
+  history <- fetchUserHistory conn (userId payload)
 
   let inputVec = V.fromList (features payload)
-  let result   = predict inputVec history
+  let result = predict inputVec history
 
   redisConn <- R.connect R.defaultConnectInfo
 
-  R.runRedis redisConn $ do
+  _ <- R.runRedis redisConn $ do
     R.rpush "tasks" [BL.toStrict (encode result)]
 
   return result
-
 
 server :: Server MyAPI
 server = predictHandler
