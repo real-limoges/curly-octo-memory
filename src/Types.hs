@@ -1,22 +1,22 @@
-{-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DeriveAnyClass #-}
+{-# LANGUAGE DeriveGeneric #-}
 
 module Types where
 
 import Data.Aeson (FromJSON, ToJSON)
 import Data.Text (Text)
 import Data.Time (UTCTime)
+import Database.PostgreSQL.Simple.FromRow (FromRow, field, fromRow)
 import GHC.Generics (Generic)
-import Database.PostgreSQL.Simple.FromRow (FromRow, fromRow, field)
 
-newtype JobId = JobId { getJobId :: Text }
-  deriving stock (Show, Generic)
-  deriving anyclass (FromJSON, ToJSON)
+newtype JobId = JobId {getJobId :: Text}
+    deriving stock (Show, Generic)
+    deriving anyclass (FromJSON, ToJSON)
 
 data JobStatus
-  = Queued
-  | Processing
-  | Completed
-  | Failed Text
-  deriving stock (Show, Generic)
-  deriving anyclass (FromJSON, ToJSON)
+    = Queued
+    | Processing
+    | Completed
+    | Failed Text
+    deriving stock (Show, Generic)
+    deriving anyclass (FromJSON, ToJSON)
