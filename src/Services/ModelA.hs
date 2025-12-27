@@ -1,12 +1,12 @@
 module Services.ModelA where
 
+import App (AppM)
 import Core.Pipeline as Pipeline
+import Database.Queue qualified as Q
+import Database.Repository qualified as R
 import Dtos
 import Servant (ServerError (..), err400)
-import Database.Repository qualified as R
 import Types
-import App (AppM)
-import Database.Queue qualified as Q
 
 submitJob :: ModelARequest -> AppM JobId
 submitJob req = do
