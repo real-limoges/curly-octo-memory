@@ -20,3 +20,21 @@ data JobStatus
     | Failed Text
     deriving stock (Show, Generic)
     deriving anyclass (FromJSON, ToJSON)
+
+-- This is for sending stuff over to a Redis Queue
+data ValidatedMLPayload = ValidatedMLPayload
+    { vJobType :: Text
+    , vModelParams :: [String]
+    }
+    deriving stock (Show, Eq, Generic)
+    deriving anyclass (FromJSON, ToJSON)
+
+data JobStatusTicket = JobStatusTicket
+    { dbJobId :: Text
+    , dbStatus :: Text
+    , dbCreatedAt :: UTCTime
+    }
+    deriving stock (Show, Generic)
+
+instance FromRow JobStatusTicket where
+    fromRow = JobStatusTicket <$> field <*> field <*> field

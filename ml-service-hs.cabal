@@ -17,14 +17,19 @@ source-repository head
 
 library
   default-language: GHC2024
+  default-extensions:
+    NamedFieldPuns
+    OverloadedStrings
+    RecordWildCards
+    OverloadedRecordDot
   exposed-modules:
-    API
+    Api
     App
     Types
-    DTOs
+    Dtos
     Core.Pipeline
-    Infrastructure.Queue
-    Infrastructure.Repository
+    Database.Queue
+    Database.Repository
     Services.ModelA
     Services.ModelB
     Handlers
