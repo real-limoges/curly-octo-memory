@@ -1,4 +1,4 @@
-cabal-version: 3.0
+cabal-version: 3.12
 name: ml-service-hs
 version: 0.1.0.0
 author: Real Limoges
@@ -21,6 +21,7 @@ library
     API
     App
     Types
+    DTOs
     Core.Pipeline
     Infrastructure.Queue
     Infrastructure.Repository
@@ -29,9 +30,8 @@ library
     Handlers
   hs-source-dirs:
     src
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
-    base ^>=4.20.0.0 && <5,
+    base >=4.20.0.0 && <5,
     text,
     bytestring,
     aeson,
@@ -55,6 +55,6 @@ executable ml-service-hs-exe
     src
   default-language: GHC2024
   build-depends:
-    base ^>=4.20.0.0
-    ml-service-hs,
+    base >=4.20.0.0 && <5,
+    ml-service-hs
 

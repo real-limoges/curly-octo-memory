@@ -1,29 +1,22 @@
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DeriveAnyClass #-}
 
 module Types where
 
 import Data.Aeson (FromJSON, ToJSON)
-import Data.Vector.Storable qualified as V
+import Data.Text (Text)
+import Data.Time (UTCTime)
 import GHC.Generics (Generic)
+import Database.PostgreSQL.Simple.FromRow (FromRow, fromRow, field)
 
-data Payload = Payload
-  { userId :: String,
-    features :: [Double]
-  }
-  deriving (Show, Generic)
+newtype JobId = JobId { getJobId :: Text }
+  deriving stock (Show, Generic)
+  deriving anyclass (FromJSON, ToJSON)
 
-instance FromJSON Payload
-
-data TaskResult = TaskResult
-  { classification :: String,
-    confidence :: Double,
-    distance :: Double
-  }
-  deriving (Show, Generic)
-
-instance ToJSON TaskResult
-
-type MathVector = V.Vector Double
-
-toMathVector :: [Double] -> MathVector
-toMathVector = V.fromList
+data JobStatus
+  = Queued
+  | Processing
+  | Completed
+  | Failed Text
+  deriving stock (Show, Generic)
+  deriving anyclass (FromJSON, ToJSON)
