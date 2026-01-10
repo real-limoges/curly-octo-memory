@@ -5,10 +5,10 @@ module Server (app) where
 
 -- import Database.PostgreSQL.Simple (connect, ConnectInfo(..), defaultConnectInfo, PGArray(..))
 
-import API
+import API.API
 import Configuration.Dotenv (defaultConfig, loadFile)
 import Control.Monad.IO.Class (liftIO)
-import Core
+import Core.Pipeline
 import Data.Aeson (encode)
 import Data.ByteString.Lazy qualified as BL
 import Data.Vector.Storable qualified as V

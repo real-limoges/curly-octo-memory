@@ -1,6 +1,6 @@
 module Core.Pipeline where
 
-import Dtos
+import API.Dtos
 import Types
 
 data PipelineError = InvalidDataset | InvalidParams

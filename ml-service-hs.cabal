@@ -1,15 +1,23 @@
-cabal-version: 3.12
-name: ml-service-hs
-version: 0.1.0.0
-author: Real Limoges
-license: BSD-3-Clause
-license-file: LICENSE
-build-type: Simple
+cabal-version:      3.12
+name:               ml-service-hs
+version:            0.1.0.0
+author:             Real Limoges
+license:            BSD-3-Clause
+license-file:       LICENSE
+build-type:         Simple
 extra-source-files:
-  README.md
+    README.md
 
 common warnings
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
+  ghc-options: -Wall
+               -Wcompat
+               -Widentities
+               -Wincomplete-record-updates
+               -Wincomplete-uni-patterns
+               -Wmissing-export-lists
+               -Wmissing-home-modules
+               -Wpartial-fields
+               -Wredundant-constraints
 
 source-repository head
   type: git
@@ -23,32 +31,36 @@ library
     RecordWildCards
     OverloadedRecordDot
   exposed-modules:
-    Api
-    App
+    API.Api
+    API.App
+    API.Dtos
+    API.Handlers
     Types
-    Dtos
     Core.Pipeline
-    Database.Queue
     Database.Repository
     Services.ModelA
     Services.ModelB
-    Handlers
+
   hs-source-dirs:
     src
   build-depends:
-    base >=4.20.0.0 && <5,
-    text,
-    bytestring,
-    aeson,
-    servant-server,
-    warp,
-    hedis,
-    postgresql-simple,
-    resource-pool,
-    time,
-    uuid,
-    mtl,
-    transformers
+        base >=4.20.0.0 && <5
+      , vector ^>=0.13.2.0
+      , text
+      , bytestring
+      , aeson
+      , servant
+      , servant-server
+      , http-media
+      , warp
+      , hedis
+      , postgresql-simple
+      , resource-pool
+      , time
+      , uuid
+      , mtl
+      , transformers
+      , cassava
 
 
 
@@ -56,10 +68,9 @@ executable ml-service-hs-exe
   import: warnings
   main-is: Main.hs
   hs-source-dirs:
-    app,
-    src
+        app
+      , src
   default-language: GHC2024
   build-depends:
-    base >=4.20.0.0 && <5,
-    ml-service-hs
-
+        base >=4.20.0.0 && <5
+      , ml-service-hs

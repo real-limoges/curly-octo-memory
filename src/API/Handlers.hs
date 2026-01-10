@@ -1,12 +1,12 @@
-module Handlers (
+module API.Handlers (
     server,
 )
 where
 
-import Api
-import App
+import API.Api
+import API.App
+import API.Dtos
 import Data.Text (Text)
-import Dtos
 import Servant
 
 import Infrastructure.Repository qualified as Repo
@@ -21,5 +21,5 @@ server = postModelA :<|> postModelB
 postModelA :: ModelARequest -> AppM JobId
 postModelA = ModelAService.submitJob
 
-postModelB :: ModelBRequest -> AppM JobId
-postModelB = ModelBService.submitJob
+-- postModelB :: ModelBRequest -> AppM JobId
+-- postModelB = ModelBService.submitJob

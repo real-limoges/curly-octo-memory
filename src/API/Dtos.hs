@@ -2,7 +2,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DuplicateRecordFields #-}
 
-module Dtos where
+module API.Dtos where
 
 import Data.Aeson (FromJSON, ToJSON)
 import GHC.Generics (Generic)
