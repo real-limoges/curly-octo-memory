@@ -1,23 +1,22 @@
 {-# LANGUAGE DeriveAnyClass #-}
-
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 
 module API.App where
 
-import Data.Proxy (Proxy(..))
-import Control.Monad.Reader (ReaderT(..), MonadReader(..), asks)
-import Control.Monad.Except (ExceptT(..), MonadError(..), runExceptT)
-import Control.Monad.IO.Class (MonadIO(..))
+import Control.Monad.Except (ExceptT (..), MonadError (..), runExceptT)
+import Control.Monad.IO.Class (MonadIO (..))
+import Control.Monad.Reader (MonadReader (..), ReaderT (..), asks)
 import Data.Pool (Pool, withResource)
+import Data.Proxy (Proxy (..))
 import Data.Text (Text)
 import Database.PostgreSQL.Simple qualified as PG
-import Database.Redis (Connection)
+import Database.Redis qualified as R
 import Servant (Handler, ServerError)
 import Types
 
 -- state management
 data AppState = AppState
-    { redisConn :: Connection
+    { redisConn :: R.Connection
     , pgPool :: Pool PG.Connection
     , queueName :: Text
     }
@@ -41,3 +40,8 @@ runDb :: (PG.Connection -> IO a) -> AppM a
 runDb queryAction = do
     pool <- asks pgPool
     liftIO $ withResource pool queryAction
+
+runRedis :: R.Redis a -> AppM a
+runRedis action = do
+    rConn <- asks redisConn
+    liftIO $ R.runRedis rConn action

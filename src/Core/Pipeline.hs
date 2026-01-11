@@ -15,16 +15,16 @@ prepareModelA req
     | otherwise =
         Right $
             ValidatedMLPayload
-                { vJobType = "modelA"
+                { vJobType = ModelAType
                 , vModelParams = req.modelParams
                 }
 
-prepareModelB :: ModelARequest -> Either PipelineError ValidatedMLPayload
+prepareModelB :: ModelBRequest -> Either PipelineError ValidatedMLPayload
 prepareModelB req
     | null req.dataset = Left InvalidDataset
     | otherwise =
         Right $
             ValidatedMLPayload
-                { vJobType = "modelB"
+                { vJobType = ModelBType
                 , vModelParams = req.modelParams
                 }

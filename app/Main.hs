@@ -1,22 +1,24 @@
-module Main where
+{-# LANGUAGE OverloadedStrings #-}
 
-import Data.Pool (Pool, createPool)
+module Main (
+    main,
+) where
+
+import Data.Pool (defaultPoolConfig, newPool)
 import Data.Proxy (Proxy (..))
-import Data.Text (Text)
+import Data.Text ()
 
 -- db imports
 import Database.PostgreSQL.Simple (close, connectPostgreSQL)
-import Database.PostgreSQL.Simple qualified as PG
-import Database.Redis (Connection, connect, defaultConnectInfo)
+import Database.Redis qualified as R
 
 -- service imports
 import Network.Wai.Handler.Warp (run)
-import Servant (Proxy (..), hoistServer, serve)
+import Servant (hoistServer, serve)
 
 -- custom imports
-import Api (MLServiceAPI)
-import App (AppConfig (..), runApp)
-import Handlers (server)
+import API.Api (MLServiceAPI, server)
+import API.App (AppState (..), runApp)
 
 api :: Proxy MLServiceAPI
 api = Proxy
@@ -24,15 +26,16 @@ api = Proxy
 main :: IO ()
 main = do
     -- connect Redis
-    redisConn <- connect defaultConnectInfo
+    redisConn <- R.checkedConnect R.defaultConnectInfo
 
     -- connect PostgreSQL
-    let connStr = "hdost=localhost dbname=mldb user=postgres password=secret"
-    pgPool <- createPool (PG.connectPostgreSQL connStr) PG.close 1 10 10
+    let connStr = "host=localhost dbname=mldb user=postgres password=secret"
+    let poolConfig = defaultPoolConfig (connectPostgreSQL connStr) close 10 10
+    pgPool <- newPool poolConfig
 
     -- create state for application
     let config =
-            AppConfig
+            AppState
                 { redisConn = redisConn
                 , pgPool = pgPool
                 , queueName = "default"

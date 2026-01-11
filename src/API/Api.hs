@@ -3,12 +3,17 @@
 
 module API.Api where
 
+import API.App (AppM)
 import API.Dtos (ModelARequest, ModelBRequest)
-import Data.Csv (FromRecord, HasHeader (NoHeader), decode)
+import API.Handlers (modelAHandler, modelBHandler)
+import Data.Csv (FromRecord, HasHeader (..), decode)
+import Data.Proxy (Proxy (..))
 import Data.Text (Text)
 import Data.Vector (Vector)
 import Network.HTTP.Media ((//))
+import Servant
 import Servant.API
+import Types
 
 data CSV
 
@@ -21,26 +26,24 @@ instance (FromRecord a) => MimeUnrender CSV (Vector a) where
             Left err -> Left $ "CSV Parsing Failed... Error: " ++ err
             Right v -> Right v
 
-type HealthEndpoint =
-    "health"
-        :> Get '[JSON] String
-
 type ModelAEndpoint =
     "model_a"
-        :> QueryParam' '[Required, Strict] "sub" String
-        :> QueryParam' '[Required, String] "lon" Double
-        :> QueryParam' '[Required, String] "lat" Double
-        :> Post '[JSON] NoContent
+        :> ReqBody '[JSON] ModelARequest
+        :> Post '[JSON] JobId
 
-type BulkUploadEndpoint =
-    "bulk_upload"
-        :> ReqBody '[JSON, CSV] (Vector Double)
-        :> Post '[JSON] [Double]
+type ModelBEndpoint =
+    "model_b"
+        :> ReqBody '[JSON] ModelBRequest
+        :> Post '[JSON] JobId
 
-type HSAPI =
-    HealthEndpoint
-        :<|> ModelAEndpoint
-        :<|> BulkUploadEndpoint
+type MLServiceAPI =
+    ModelAEndpoint
+        :<|> ModelBEndpoint
 
-apiProxy :: Proxy HSAPI
+apiProxy :: Proxy MLServiceAPI
 apiProxy = Proxy
+
+server :: ServerT MLServiceAPI AppM
+server =
+    modelAHandler
+        :<|> modelBHandler

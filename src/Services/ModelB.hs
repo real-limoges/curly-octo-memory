@@ -1,20 +1,21 @@
 module Services.ModelB where
 
-import App (AppM)
+import API.App (AppM, runDb)
+import API.Dtos (ModelBRequest)
 import Core.Pipeline as Pipeline
 import Database.Queue qualified as Q
 import Database.Repository qualified as R
-import Dtos
-import Servant (ServerError (..), err400)
+import Servant (ServerError (..), err400, throwError)
 import Types
 
-submitJob :: ModelARequest -> AppM JobId
+import Data.UUID (toText)
+import Data.UUID.V4 (nextRandom)
+
+submitJob :: ModelBRequest -> AppM JobId
 submitJob req = do
     validatedPayload <- case Pipeline.prepareModelB req of
         Left _ -> throwError err400{errBody = "Validation Error"}
         Right v -> return v
 
-    -- push to the Redis Queue/Worker
-    jid <- Q.pushToQueue validatedPayload
-
-    runDb $ \conn -> R.createJob conn jid Queued
+    jid <- Q.enqueueJob validatedPayload
+    return jid

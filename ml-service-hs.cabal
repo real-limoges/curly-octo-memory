@@ -30,6 +30,11 @@ library
     OverloadedStrings
     RecordWildCards
     OverloadedRecordDot
+    DeriveGeneric
+    DeriveAnyClass
+    DerivingStrategies
+    GeneralizedNewtypeDeriving
+
   exposed-modules:
     API.Api
     API.App
@@ -37,6 +42,7 @@ library
     API.Handlers
     Types
     Core.Pipeline
+    Database.Queue
     Database.Repository
     Services.ModelA
     Services.ModelB
@@ -61,6 +67,7 @@ library
       , mtl
       , transformers
       , cassava
+      , uuid
 
 
 
@@ -69,8 +76,13 @@ executable ml-service-hs-exe
   main-is: Main.hs
   hs-source-dirs:
         app
-      , src
   default-language: GHC2024
   build-depends:
         base >=4.20.0.0 && <5
       , ml-service-hs
+      , servant-server
+      , warp
+      , postgresql-simple
+      , hedis
+      , resource-pool
+      , text
