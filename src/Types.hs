@@ -1,6 +1,12 @@
 {-# LANGUAGE DeriveGeneric #-}
 
-module Types where
+module Types
+  ( Payload (..),
+    TaskResult (..),
+    MathVector,
+    toMathVector,
+  )
+where
 
 import Data.Aeson (FromJSON, ToJSON)
 import Data.Vector.Storable qualified as V

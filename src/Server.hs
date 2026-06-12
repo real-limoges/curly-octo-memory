@@ -2,18 +2,16 @@
 
 module Server (app) where
 
--- import Database.PostgreSQL.Simple (connect, ConnectInfo(..), defaultConnectInfo, PGArray(..))
-
 import API
 import Configuration.Dotenv (defaultConfig, loadFile)
 import Control.Monad.IO.Class (liftIO)
 import Core
 import Data.Aeson (encode)
 import Data.ByteString.Lazy qualified as BL
+import Data.List.NonEmpty (NonEmpty ((:|)))
 import Data.Vector.Storable qualified as V
 import Database.PostgreSQL.Simple qualified as PG
 import Database.Redis qualified as R
-import Network.Wai (Application)
 import Repository (fetchUserHistory)
 import Servant
 import System.Environment (getEnv)
@@ -47,14 +45,14 @@ predictHandler payload = liftIO $ do
   redisConn <- R.connect R.defaultConnectInfo
 
   _ <- R.runRedis redisConn $ do
-    R.rpush "tasks" [BL.toStrict (encode result)]
+    R.rpush "tasks" (BL.toStrict (encode result) :| [])
 
   return result
 
-server :: Server MyAPI
+server :: Server PredictAPI
 server = predictHandler
 
-api :: Proxy MyAPI
+api :: Proxy PredictAPI
 api = Proxy
 
 app :: Application
