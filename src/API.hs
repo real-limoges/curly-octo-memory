@@ -1,9 +1,10 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE TypeOperators #-}
 
-module API where
+module API (PredictAPI) where
 
 import Servant
 import Types
 
-type MyAPI = "predict" :> ReqBody '[JSON] Payload :> Post '[JSON] TaskResult
+-- | POST /predict — classify a feature vector against a user's history.
+type PredictAPI = "predict" :> ReqBody '[JSON] Payload :> Post '[JSON] TaskResult

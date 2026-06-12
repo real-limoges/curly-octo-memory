@@ -1,0 +1,85 @@
+cabal-version: 3.12
+
+name: hs-prediction-service
+version: 0.1.0.0
+synopsis: A small k-nearest-neighbor prediction service over HTTP.
+description: A Servant/Warp HTTP service that classifies an incoming feature
+             vector against a user's history (Postgres) using nearest-neighbor,
+             and enqueues each result on Redis. See the README for details.
+author: Real Limoges
+copyright: 2026 Real Limoges
+license: BSD-3-Clause
+license-file: LICENSE
+build-type: Simple
+extra-source-files:
+  README.md
+
+source-repository head
+  type: git
+  location: https://github.com/real-limoges/hs-prediction-service
+
+common warnings
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
+
+library
+  import: warnings
+  exposed-modules:
+    API
+    Core
+    Server
+    Repository
+    Types
+  other-modules:
+    Paths_hs_prediction_service
+  autogen-modules:
+    Paths_hs_prediction_service
+  hs-source-dirs:
+    src
+  build-depends:
+    base >=4.7 && <5,
+    aeson,
+    bytestring,
+    dotenv,
+    text,
+    vector,
+    hedis,
+    postgresql-simple,
+    servant,
+    servant-server,
+    wai,
+    warp
+
+  default-language: GHC2024
+
+executable hs-prediction-service-exe
+  import: warnings
+  main-is: Main.hs
+  other-modules:
+    Paths_hs_prediction_service
+  autogen-modules:
+    Paths_hs_prediction_service
+  hs-source-dirs:
+    app
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+    base >=4.7 && <5,
+    hs-prediction-service,
+    warp,
+    wai
+  default-language: GHC2024
+
+test-suite hs-prediction-service-test
+  import: warnings
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+    Paths_hs_prediction_service
+  autogen-modules:
+    Paths_hs_prediction_service
+  hs-source-dirs:
+    test
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+    base >=4.7 && <5,
+    hs-prediction-service
+  default-language: GHC2024
